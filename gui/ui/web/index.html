@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Heimdall Timewatch</title>
+  <link rel="stylesheet" href="themes.css" />
+  <link rel="stylesheet" href="glass.css" />
+  <link rel="stylesheet" href="dark-ace.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="notifications.css" />
+  <link rel="stylesheet" href="profile.css" />
+  <script src="i18n.js"></script>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+</head>
+<body data-theme="dark">
+  <!-- Fondo mesh -->
+  <div class="scene-bg" aria-hidden="true">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+  </div>
+
+  <div class="app-root" id="app-root">
+    <!-- Barra superior única -->
+    <header class="top-bar-full glass">
+      <div class="top-brand-plain">
+        <div class="brand-shield">
+          <span class="brand-shield-ico" data-icon="shield"></span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-greet" id="brand-greet" data-i18n="profile.greet">Sesión forense</span>
+          <strong id="brand-user-name">Analista DFIR</strong>
+        </div>
+      </div>
+
+      <div class="top-spacer" aria-hidden="true"></div>
+
+      <div class="top-bar-end">
+        <div class="top-dots-slot" aria-hidden="true">
+          <div class="window-dots window-dots--user"><span></span><span></span><span></span></div>
+        </div>
+
+        <div class="top-controls-row">
+          <div id="expanding-search-dock" class="search-dock-slot"></div>
+          <div class="lang-switch glass-inset" role="group" aria-label="Language">
+            <button type="button" class="lang-btn active" data-lang="es">ES</button>
+            <button type="button" class="lang-btn" data-lang="en">EN</button>
+          </div>
+          <label class="theme-switch elastic-switch glass-inset" title="Theme">
+            <input type="checkbox" id="theme-toggle" role="switch" aria-checked="false" />
+            <span class="elastic-switch__track theme-track" aria-hidden="true">
+              <span class="elastic-switch__thumb theme-thumb"></span>
+            </span>
+            <span class="theme-label" data-i18n="theme.dark">Oscuro</span>
+          </label>
+          <div class="ollama-pill glass-inset">
+            <span class="status-dot" id="ollama-dot"></span>
+            <span id="ollama-label" data-i18n="ollama.checking">Ollama…</span>
+          </div>
+          <button type="button" class="icon-btn glass-inset top-ctl" id="btn-sidebar-toggle" data-i18n-title="sidebar.collapse">
+            <span class="top-ctl-ico" data-icon="menu"></span>
+          </button>
+
+          <div class="notif-wrap top-ctl" id="notif-wrap">
+            <button type="button" class="btn-notif glass-inset top-ctl" id="btn-notifs" aria-label="Notificaciones" aria-expanded="false" aria-controls="notif-panel">
+              <span class="top-ctl-ico" data-icon="bell"></span>
+              <span class="notif-count" id="notif-count" hidden>0</span>
+            </button>
+          </div>
+
+          <div class="user-wrap top-ctl" id="user-wrap">
+            <div class="user-chip glass-inset" id="user-chip" role="button" tabindex="0" aria-haspopup="dialog" aria-expanded="false" aria-controls="user-menu-modal" aria-label="Menú de usuario">
+              <span class="user-chip__avatar" id="user-avatar">DF</span>
+              <span class="user-chip__meta">
+                <span class="user-chip__name" id="user-chip-name">Analista DFIR</span>
+                <span class="user-chip__role" id="user-chip-role">Analista forense</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="notif-backdrop" id="notif-backdrop" hidden aria-hidden="true"></div>
+    <div class="notif-panel" id="notif-panel" hidden role="dialog" aria-label="Notificaciones">
+      <div class="notif-panel__head">
+        <h2 class="notif-panel__title" data-i18n="notif.title">Notificaciones</h2>
+        <button type="button" class="notif-panel__mark" id="notif-mark-read" data-i18n="notif.markRead">Marcar todo como leído</button>
+      </div>
+      <div class="notif-panel__scroll" id="notif-list"></div>
+      <div class="notif-panel__foot">
+        <button type="button" class="notif-panel__view-all" id="notif-view-all" data-i18n="notif.viewAll">Ver todas las notificaciones</button>
+      </div>
+    </div>
+
+    <div class="shell glass-strong glass-shine" id="shell">
+      <aside class="sidebar" id="sidebar-left">
+        <nav class="sidebar-nav glass-inset" aria-label="Main navigation">
+          <div class="sidebar-nav-label" data-i18n="nav.menu">Menú</div>
+          <button type="button" class="nav-item sidebar-nav-item active" data-view="dashboard" data-i18n-title="nav.dashboard">
+            <span class="nav-ico" data-icon="dashboard"></span>
+            <span class="nav-label" data-i18n="nav.dashboard">Dashboard</span>
+            <span class="nav-badge" id="badge-flagged">0</span>
+          </button>
+          <button type="button" class="nav-item sidebar-nav-item" data-view="explorer" data-i18n-title="nav.explorer">
+            <span class="nav-ico" data-icon="explorer"></span>
+            <span class="nav-label" data-i18n="nav.explorer">NTFS Explorer</span>
+          </button>
+          <button type="button" class="nav-item sidebar-nav-item" data-view="lab" data-i18n-title="nav.lab">
+            <span class="nav-ico" data-icon="lab"></span>
+            <span class="nav-label" data-i18n="nav.lab">Modo laboratorio</span>
+          </button>
+          <button type="button" class="nav-item sidebar-nav-item" data-view="ai" data-i18n-title="nav.ai">
+            <span class="nav-ico" data-icon="ai"></span>
+            <span class="nav-label" data-i18n="nav.ai">Asistente IA</span>
+          </button>
+          <button type="button" class="nav-item sidebar-nav-item" data-view="settings" data-i18n-title="nav.settings">
+            <span class="nav-ico" data-icon="settings"></span>
+            <span class="nav-label" data-i18n="nav.settings">Configuración</span>
+          </button>
+          <button type="button" class="nav-item sidebar-nav-item sidebar-nav-item--foot" id="btn-support" data-i18n-title="nav.support">
+            <span class="nav-ico" data-icon="help"></span>
+            <span class="nav-label" data-i18n="nav.support">Soporte</span>
+          </button>
+        </nav>
+
+        <!-- Dashboard sidebar panels -->
+        <div id="sidebar-dashboard" class="sidebar-panels">
+          <div class="glass-inset panel-card artifact-panel">
+            <div class="card-head">
+              <span class="card-head-icon"><span class="ico sm" data-icon="mft"></span></span>
+              <h3 class="panel-title" data-i18n="panel.artifacts">Artefactos NTFS</h3>
+            </div>
+
+            <div class="config-stack">
+              <div class="config-row">
+                <div class="config-row__label">
+                  <span class="ico sm" data-icon="mft"></span>
+                  <span data-i18n="field.mft">$MFT</span>
+                </div>
+                <div class="field-row compact">
+                  <input type="text" id="mft-path" class="config-input" data-i18n-placeholder="field.mftPh" placeholder="Ruta al $MFT" readonly />
+                  <button type="button" class="btn-icon glass-inset" id="btn-pick-mft" title="Examinar"><span class="ico sm" data-icon="file"></span></button>
+                </div>
+              </div>
+              <div class="config-row">
+                <div class="config-row__label">
+                  <span class="ico sm" data-icon="journal"></span>
+                  <span data-i18n="field.usn">$UsnJrnl:$J</span>
+                </div>
+                <div class="field-row compact">
+                  <input type="text" id="usn-path" class="config-input" data-i18n-placeholder="field.usnPh" placeholder="Opcional" readonly />
+                  <button type="button" class="btn-icon glass-inset" id="btn-pick-usn" title="Examinar"><span class="ico sm" data-icon="file"></span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="config-grid">
+              <div class="config-cell">
+                <label class="config-cell__label">
+                  <span class="ico sm" data-icon="calendar"></span>
+                  <span data-i18n="field.osInstall">Instalación SO (H5)</span>
+                </label>
+                <input type="date" id="system-install" />
+              </div>
+              <div class="config-cell">
+                <label class="config-cell__label">
+                  <span class="ico sm" data-icon="score"></span>
+                  <span data-i18n="field.minScore">Score mín.</span>
+                </label>
+                <input type="number" id="min-score" min="1" max="200" value="1" />
+              </div>
+            </div>
+
+            <div class="config-toggles">
+              <label class="check-pill glass-inset"><input type="checkbox" id="only-in-use" /><span data-i18n="check.inUse">En uso</span></label>
+              <label class="check-pill glass-inset"><input type="checkbox" id="include-dirs" /><span data-i18n="check.dirs">Dirs</span></label>
+              <label class="check-pill glass-inset"><input type="checkbox" id="enable-h3" checked /><span data-i18n="check.h3">H3</span></label>
+            </div>
+
+            <div id="scan-status" class="hint-text scan-hint"></div>
+            <div class="progress-track" id="scan-progress" hidden><span></span></div>
+          </div>
+
+          <div class="glass-inset panel-card filter-panel">
+            <div class="card-head">
+              <span class="card-head-icon"><span class="ico sm" data-icon="filter"></span></span>
+              <h3 class="panel-title" data-i18n="panel.filters">Filtros rápidos</h3>
+            </div>
+            <div class="filter-chips">
+              <button type="button" class="chip active" data-filter="all" data-i18n="filter.all">Todos</button>
+              <button type="button" class="chip" data-filter="CRÍTICO" data-i18n="filter.crit">Crítico</button>
+              <button type="button" class="chip" data-filter="ALTO" data-i18n="filter.high">Alto</button>
+            </div>
+            <nav class="mini-nav compact">
+              <a class="sidebar-link active" data-filter="all"><span class="ico sm" data-icon="filter"></span><span data-i18n="filter.allFindings">Todos los hallazgos</span></a>
+              <a class="sidebar-link" data-filter="CRÍTICO"><span data-i18n="filter.onlyCrit">Solo CRÍTICO</span></a>
+              <a class="sidebar-link" data-filter="ALTO"><span data-i18n="filter.onlyHigh">Solo ALTO</span></a>
+              <a class="sidebar-link" id="link-export"><span class="ico sm" data-icon="export"></span><span data-i18n="filter.export">Exportar informe</span></a>
+            </nav>
+          </div>
+        </div>
+
+        <!-- Lab sidebar -->
+        <div id="sidebar-lab" class="sidebar-panels" hidden>
+          <div class="glass-inset panel-card">
+            <h3 class="panel-title" data-i18n="panel.labControls">Controles de lab</h3>
+            <div class="field">
+              <label data-i18n="field.cleanFiles">Archivos limpios</label>
+              <input type="number" id="lab-clean-files" min="50" max="2000" value="200" />
+            </div>
+            <p class="hint-text" id="lab-status" data-i18n="lab.status">MFT sintético con casos plantados.</p>
+          </div>
+          <div class="glass-inset panel-card">
+            <h3 class="panel-title" data-i18n="panel.graphTools">Herramientas de grafo</h3>
+            <nav class="mini-nav">
+              <a class="sidebar-link active" data-i18n="lab.tools.filters">Graph Filters</a>
+              <a class="sidebar-link" data-i18n="lab.tools.events">Event Selection</a>
+              <a class="sidebar-link" data-i18n="lab.tools.zoom">Timeline Zoom</a>
+              <a class="sidebar-link" id="lab-search-link" data-i18n="lab.tools.search">Search</a>
+            </nav>
+          </div>
+        </div>
+
+        <div class="sidebar-cta glass-inset">
+          <button type="button" class="cta-fab" id="btn-scan" data-i18n-title="cta.scan">
+            <span class="cta-fab-ico" data-icon="scan"></span>
+          </button>
+          <div class="cta-text">
+            <strong id="cta-label" data-i18n="cta.scan">Escanear MFT</strong>
+            <span id="cta-sub" data-i18n="cta.scanSub">Análisis $SI vs $FN</span>
+          </div>
+          <button type="button" class="btn-lab-hidden" id="btn-lab" hidden>Analyze Graph</button>
+        </div>
+      </aside>
+
+      <!-- Workspace -->
+      <main class="workspace" id="main-canvas">
+        <section class="view active" id="view-dashboard">
+          <div class="kpi-row">
+            <div class="kpi glass-inset crit"><div class="n" id="stat-crit">0</div><div class="l" data-i18n="kpi.crit">Crítico</div></div>
+            <div class="kpi glass-inset high"><div class="n" id="stat-high">0</div><div class="l" data-i18n="kpi.high">Alto</div></div>
+            <div class="kpi glass-inset med"><div class="n" id="stat-med">0</div><div class="l" data-i18n="kpi.med">Medio</div></div>
+            <div class="kpi glass-inset low"><div class="n" id="stat-low">0</div><div class="l" data-i18n="kpi.low">Bajo</div></div>
+            <div class="kpi glass-inset"><div class="n" id="stat-flagged">0</div><div class="l" data-i18n="kpi.flagged">Marcados</div></div>
+          </div>
+
+          <div class="glow-chart-panel glass-inset">
+            <div id="glow-chart" class="glow-chart"></div>
+          </div>
+
+          <div class="toolbar glass-inset">
+            <button type="button" class="btn-primary btn-toolbar" id="btn-new-scan" data-i18n-title="scan.new">
+              <span class="ico sm" data-icon="scan" aria-hidden="true"></span>
+              <span data-i18n="scan.new">Nuevo escaneo</span>
+            </button>
+            <button type="button" class="btn-export btn-toolbar" id="btn-new-lab" hidden data-i18n-title="scan.newLab">
+              <span class="ico sm" data-icon="lab" aria-hidden="true"></span>
+              <span data-i18n="scan.newLab">Nuevo laboratorio</span>
+            </button>
+            <input type="search" id="filter-text" data-i18n-placeholder="search.ph" placeholder="Buscar archivo…" />
+            <div id="advanced-filters-root" class="advanced-filters-root"></div>
+            <span class="hint-text" id="results-meta">Sin análisis</span>
+            <div class="toolbar-spacer"></div>
+            <div class="seg-control glass-inset">
+              <button type="button" class="seg active" id="btn-view-graph"><span class="ico sm" data-icon="graph"></span> <span data-i18n="view.graph">Grafo</span></button>
+              <button type="button" class="seg" id="btn-view-table"><span data-i18n="view.table">Tabla</span></button>
+            </div>
+            <div class="toolbar-exports">
+              <button type="button" class="btn-export" id="btn-export-json">JSON</button>
+              <button type="button" class="btn-export" id="btn-export-csv">CSV</button>
+              <button type="button" class="btn-primary btn-toolbar" id="btn-export-html">
+                <span class="ico sm" data-icon="export" aria-hidden="true"></span>
+                <span data-i18n="export.generateReport">Generar informe</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="canvas glass-inset graph-bg">
+            <div class="graph-area" id="graph-area">
+              <div class="graph-empty" id="graph-empty"></div>
+              <div id="graph-nodes"></div>
+            </div>
+            <div class="table-wrap findings-table-wrap" id="table-wrap" hidden>
+              <div id="findings-table-root"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-lab">
+          <div class="lab-banner glass-inset" id="lab-banner" data-i18n="lab.banner">Modo laboratorio — timestomping plantado</div>
+          <div class="lab-toolbar glass-inset">
+            <button type="button" class="btn-primary btn-toolbar" id="btn-lab-rescan">
+              <span class="ico sm" data-icon="lab" aria-hidden="true"></span>
+              <span data-i18n="scan.newLab">Nuevo laboratorio</span>
+            </button>
+            <span class="hint-text" id="lab-toolbar-hint" data-i18n="lab.rescanHint">Genera un MFT sintético nuevo con casos plantados</span>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi glass-inset"><div class="n" id="lab-stat-detected">0</div><div class="l" data-i18n="kpi.detected">Detectados</div></div>
+            <div class="kpi glass-inset"><div class="n" id="lab-stat-planted">0</div><div class="l" data-i18n="kpi.planted">Plantados</div></div>
+            <div class="kpi glass-inset crit"><div class="n" id="lab-stat-crit">0</div><div class="l" data-i18n="kpi.crit">Crítico</div></div>
+            <div class="kpi glass-inset"><div class="n" id="lab-stat-flagged">0</div><div class="l" data-i18n="kpi.flagged">Marcados</div></div>
+          </div>
+          <div class="canvas glass-inset graph-bg">
+            <div class="graph-area" id="lab-graph-area">
+              <div class="graph-empty" id="lab-graph-empty"></div>
+              <div id="lab-graph-nodes"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-ai">
+          <div id="ai-chat-root" class="full-view"></div>
+        </section>
+
+        <section class="view" id="view-explorer">
+          <div class="ntfs-explorer" id="ntfs-explorer">
+            <aside class="ntfs-tree glass-inset">
+              <div class="ntfs-panel-head">
+                <span class="card-head-icon"><span class="ico sm" data-icon="folder"></span></span>
+                <h3 data-i18n="ntfs.volume">Jerarquía de volumen</h3>
+              </div>
+              <div class="ntfs-tree-body" id="ntfs-tree"></div>
+              <p class="ntfs-tree-hint" id="ntfs-tree-hint" data-i18n="ntfs.treeHint">Tras analizar el $MFT verás el volumen y las entradas marcadas.</p>
+            </aside>
+            <div class="ntfs-splitter" data-resize="tree" role="separator" aria-orientation="vertical" aria-label="Redimensionar jerarquía" tabindex="0"></div>
+            <div class="ntfs-center">
+              <div class="ntfs-source-bar glass-inset">
+                <div class="ntfs-source-field">
+                  <label for="ntfs-mft-path" data-i18n="field.mft">$MFT</label>
+                  <div class="ntfs-source-row">
+                    <input type="text" id="ntfs-mft-path" class="config-input" data-i18n-placeholder="field.mftPh" placeholder="Ruta al $MFT" readonly />
+                    <button type="button" class="btn-export" id="ntfs-pick-mft" data-i18n="ntfs.openMft">Abrir…</button>
+                    <button type="button" class="btn-primary btn-toolbar" id="ntfs-run-scan">
+                      <span class="ico sm" data-icon="scan" aria-hidden="true"></span>
+                      <span data-i18n="ntfs.analyze">Analizar MFT</span>
+                    </button>
+                  </div>
+                </div>
+                <p class="ntfs-source-hint" data-i18n="ntfs.howItWorks">El explorador muestra las entradas MFT marcadas por el análisis ($SI vs $FN). Abre un $MFT extraído (FTK, MFTECmd, icat…) y pulsa Analizar.</p>
+              </div>
+              <div class="ntfs-toolbar glass-inset">
+                <span class="ntfs-toolbar-label" data-i18n="ntfs.filters">Filtros:</span>
+                <label class="check-pill glass-inset"><input type="checkbox" id="ntfs-f-hidden" checked /><span data-i18n="ntfs.hidden">Ocultos</span></label>
+                <label class="check-pill glass-inset"><input type="checkbox" id="ntfs-f-deleted" checked /><span data-i18n="ntfs.deleted">Eliminados</span></label>
+                <label class="check-pill glass-inset"><input type="checkbox" id="ntfs-f-ads" /><span data-i18n="ntfs.ads">ADS</span></label>
+                <div class="toolbar-spacer"></div>
+                <button type="button" class="btn-primary btn-compact" id="ntfs-export-csv" data-i18n="ntfs.exportCsv">Exportar CSV</button>
+              </div>
+              <div class="ntfs-table-wrap glass-inset">
+                <table class="ntfs-table">
+                  <thead>
+                    <tr>
+                      <th data-i18n="ntfs.colEntry">ENTRY</th>
+                      <th data-i18n="ntfs.colName">NAME</th>
+                      <th data-i18n="ntfs.colParent">PARENT</th>
+                      <th data-i18n="ntfs.colSize">SIZE</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ntfs-table-body">
+                    <tr><td colspan="4" class="empty-state" data-i18n="ntfs.empty">Abre un $MFT arriba y pulsa «Analizar MFT», o ejecuta un escaneo desde el Dashboard</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="ntfs-hex glass-inset">
+                <div class="ntfs-hex-head" id="ntfs-hex-head">
+                  <span data-i18n="ntfs.hexView">HEX VIEW</span>
+                  <span class="ntfs-hex-meta" id="ntfs-hex-meta">—</span>
+                </div>
+                <pre class="ntfs-hex-body" id="ntfs-hex-body"></pre>
+              </div>
+            </div>
+            <div class="ntfs-splitter" data-resize="details" role="separator" aria-orientation="vertical" aria-label="Redimensionar detalles" tabindex="0"></div>
+            <aside class="ntfs-details glass-inset">
+              <div class="ntfs-panel-head">
+                <span class="card-head-icon"><span class="ico sm" data-icon="mft"></span></span>
+                <h3 data-i18n="ntfs.recordDetails">Detalles del registro</h3>
+              </div>
+              <div class="ntfs-details-body" id="ntfs-details-body">
+                <p class="empty-state" data-i18n="ntfs.selectEntry">Selecciona una entrada de la tabla</p>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="view-settings">
+          <div class="full-view">
+            <div class="glass-inset panel-card wide">
+              <h2 data-i18n="settings.title">Configuración</h2>
+              <p class="sub" data-i18n="settings.sub">%APPDATA%\HeimdallTimeWatch · API key en Credential Manager</p>
+              <div class="grid-2">
+                <div class="field"><label data-i18n="settings.theme">Tema</label>
+                  <select id="set-theme">
+                    <option value="dark" data-i18n="settings.themeDark">Oscuro (glass DFIR)</option>
+                    <option value="light" data-i18n="settings.themeLight">Claro (glass blanco)</option>
+                  </select>
+                </div>
+                <div class="field"><label data-i18n="settings.lang">Idioma</label>
+                  <select id="set-locale"><option value="es">Español</option><option value="en">English</option></select>
+                </div>
+                <div class="field"><label data-i18n="settings.provider">Proveedor</label>
+                  <select id="set-provider">
+                    <option value="local" data-i18n="settings.providerLocal">Ollama local</option>
+                    <option value="cloud" data-i18n="settings.providerCloud">Ollama Cloud</option>
+                  </select>
+                </div>
+                <div class="field"><label data-i18n="settings.model">Modelo</label><select id="set-model"></select></div>
+                <div class="field" id="field-host"><label data-i18n="settings.host">URL local</label><input type="text" id="set-host" value="http://localhost:11434" /></div>
+                <div class="field" id="field-cloud-key" hidden><label data-i18n="settings.apiKey">API Key</label><input type="password" id="set-cloud-key" placeholder="ollama_..." autocomplete="off" /></div>
+              </div>
+              <div class="actions">
+                <button type="button" class="btn-soft" id="btn-test-ollama" data-i18n="settings.test">Probar conexión</button>
+                <button type="button" class="btn-primary" id="btn-save-settings" data-i18n="settings.save">Guardar</button>
+              </div>
+              <p class="hint-text" id="settings-status"></p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Inspector glass -->
+      <aside class="inspector glass-inset" id="inspector">
+        <div class="inspector-head">
+          <h2 data-i18n="inspector.title">Inspector</h2>
+          <p data-i18n="inspector.sub">Metadatos forenses</p>
+        </div>
+        <nav class="inspector-tabs">
+          <button type="button" class="inspector-tab active" data-tab="node" data-i18n="inspector.node">Nodo</button>
+          <button type="button" class="inspector-tab" data-tab="mft" data-i18n="inspector.mft">MFT</button>
+          <button type="button" class="inspector-tab" data-tab="reasons" data-i18n="inspector.reasons">Motivos</button>
+        </nav>
+        <div class="inspector-body" id="inspector-body">
+          <p class="empty-state" data-i18n="inspector.empty">Selecciona un nodo del grafo</p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Timeline glass -->
+    <footer class="timeline-bar glass" id="timeline-bar">
+      <div class="timeline-transport">
+        <button type="button" class="timeline-btn glass-inset" id="timeline-reset" title="Inicio">↺</button>
+        <button type="button" class="timeline-btn glass-inset" id="timeline-prev" title="Anterior">⏮</button>
+        <button type="button" class="timeline-btn glass-inset timeline-btn-play" id="timeline-play" title="Play/Pause">▶</button>
+        <button type="button" class="timeline-btn glass-inset" id="timeline-next" title="Siguiente">⏭</button>
+      </div>
+      <div class="timeline-main">
+        <div class="timeline-track glass-inset" id="timeline-track">
+          <div class="timeline-ticks" id="timeline-ticks"></div>
+          <div class="timeline-fill" id="timeline-fill"></div>
+          <div class="timeline-thumb" id="timeline-thumb"></div>
+        </div>
+        <div class="timeline-meta">
+          <span class="timeline-counter" id="timeline-counter">0 / 0</span>
+          <span class="timeline-ts" id="timeline-ts" data-i18n="timeline.none">Sin hallazgos</span>
+        </div>
+      </div>
+      <div class="timeline-options">
+        <select class="timeline-speed glass-inset" id="timeline-speed">
+          <option value="2400">0.5×</option>
+          <option value="1200" selected>1×</option>
+          <option value="600">2×</option>
+          <option value="300">4×</option>
+        </select>
+        <label class="timeline-loop"><input type="checkbox" id="timeline-loop" /><span data-i18n="timeline.loop">Loop</span></label>
+      </div>
+    </footer>
+  </div>
+
+  <div class="toast glass-strong" id="toast"></div>
+
+  <!-- Modal menú usuario (estilo Norvik — z-index sobre shell) -->
+  <div class="modal-overlay" id="user-menu-modal" hidden role="dialog" aria-modal="true" aria-labelledby="user-menu-title">
+    <div class="modal-card notif-ui-light user-menu-card">
+      <div class="user-popup__head">
+        <span class="user-popup__avatar" id="user-menu-avatar">DF</span>
+        <div>
+          <strong id="user-menu-title">Analista DFIR</strong>
+          <span id="user-menu-sub">Analista forense</span>
+        </div>
+        <button type="button" class="modal-close-btn" id="user-menu-close" aria-label="Cerrar">
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div class="user-menu-body">
+        <button type="button" class="user-popup__item" data-user-action="profile">
+          <span class="user-menu-ico" data-icon="person"></span>
+          <span data-i18n="profile.title">Mi perfil</span>
+        </button>
+        <button type="button" class="user-popup__item" data-user-action="settings">
+          <span class="user-menu-ico" data-icon="settings"></span>
+          <span data-i18n="nav.settings">Configuración</span>
+        </button>
+        <button type="button" class="user-popup__item" data-user-action="explorer">
+          <span class="user-menu-ico" data-icon="explorer"></span>
+          <span data-i18n="nav.explorer">NTFS Explorer</span>
+        </button>
+        <button type="button" class="user-popup__item" data-user-action="help">
+          <span class="user-menu-ico" data-icon="help"></span>
+          <span data-i18n="user.help">Ayuda DFIR</span>
+        </button>
+        <div class="user-popup__sep"></div>
+        <button type="button" class="user-popup__item user-popup__item--muted" data-user-action="quit">
+          <span class="user-menu-ico" data-icon="close"></span>
+          <span data-i18n="user.quit">Cerrar el programa</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal perfil (Norvik) -->
+  <div class="modal-overlay profile-modal-overlay" id="user-profile-modal" hidden role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+    <div class="modal-card glass-panel user-profile-card">
+      <div class="modal-card__head">
+        <div>
+          <span class="modal-card__title" id="profile-modal-title" data-i18n="profile.title">Mi perfil</span>
+          <p class="profile-modal__sub" data-i18n="profile.sub">Identidad para informes DFIR y contexto del asistente IA</p>
+        </div>
+        <button type="button" class="modal-close-btn" id="profile-close" data-i18n-title="profile.close" aria-label="Cerrar">
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div class="modal-card__body profile-modal__body">
+        <section class="profile-section">
+          <div class="profile-avatar-block">
+            <button type="button" class="profile-avatar-picker" id="profile-avatar-picker" data-i18n-title="profile.changePhoto" aria-label="Cambiar foto">
+              <img class="profile-avatar-picker__img" id="profile-avatar-preview" alt="" hidden />
+              <span class="profile-avatar-picker__initials" id="profile-avatar-initials">DF</span>
+              <span class="profile-avatar-picker__overlay"><span data-icon="upload"></span></span>
+            </button>
+            <input type="file" id="profile-avatar-input" accept="image/png,image/jpeg,image/webp" hidden />
+            <div class="profile-avatar-meta">
+              <strong data-i18n="profile.photo">Foto de perfil</strong>
+              <span data-i18n="profile.photoHint">PNG, JPG o WebP · máx. 3 MB</span>
+              <div class="profile-avatar-actions">
+                <button type="button" class="btn-soft" id="profile-avatar-upload">
+                  <span data-icon="upload"></span><span data-i18n="profile.upload">Subir foto</span>
+                </button>
+                <button type="button" class="btn-soft" id="profile-avatar-remove" hidden>
+                  <span data-icon="close"></span><span data-i18n="profile.removePhoto">Quitar</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section">
+          <h3 class="profile-section__title">
+            <span data-i18n="profile.identity">Identidad</span>
+            <span class="profile-tag profile-tag--req" data-i18n="profile.required">Obligatorio</span>
+          </h3>
+          <div class="profile-grid">
+            <div class="field">
+              <label for="profile-user-name" data-i18n="profile.fullName">Nombre completo</label>
+              <input type="text" id="profile-user-name" data-i18n-placeholder="profile.fullNamePh" placeholder="Ej. Ana García" autocomplete="name" />
+            </div>
+            <div class="field">
+              <label for="profile-user-role" data-i18n="profile.roleField">Rol / cargo</label>
+              <input type="text" id="profile-user-role" data-i18n-placeholder="profile.rolePh" placeholder="Ej. Analista DFIR" autocomplete="organization-title" />
+            </div>
+            <div class="field field--wide">
+              <label for="profile-bio" data-i18n="profile.about">Acerca de ti</label>
+              <textarea id="profile-bio" rows="3" data-i18n-placeholder="profile.aboutPh" placeholder="Breve descripción profesional (opcional)"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section">
+          <h3 class="profile-section__title" data-i18n="profile.orgSection">Organización</h3>
+          <div class="profile-grid">
+            <div class="field">
+              <label for="profile-org" data-i18n="profile.company">Empresa / entidad</label>
+              <input type="text" id="profile-org" data-i18n-placeholder="profile.companyPh" placeholder="Nombre de la organización" autocomplete="organization" />
+            </div>
+            <div class="field">
+              <label for="profile-department" data-i18n="profile.department">Departamento / área</label>
+              <input type="text" id="profile-department" data-i18n-placeholder="profile.departmentPh" placeholder="Ej. Respuesta a incidentes" />
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section">
+          <h3 class="profile-section__title">
+            <span data-i18n="profile.contact">Contacto</span>
+            <span class="profile-tag profile-tag--opt" data-i18n="profile.optional">Opcional</span>
+          </h3>
+          <div class="profile-grid">
+            <div class="field">
+              <label for="profile-email" data-i18n="profile.email">Correo electrónico</label>
+              <input type="email" id="profile-email" data-i18n-placeholder="profile.emailPh" placeholder="nombre@empresa.com" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label for="profile-phone" data-i18n="profile.phone">Teléfono</label>
+              <input type="tel" id="profile-phone" placeholder="+34 600 000 000" autocomplete="tel" />
+            </div>
+            <div class="field field--wide">
+              <label for="profile-location" data-i18n="profile.location">Ubicación / oficina</label>
+              <input type="text" id="profile-location" data-i18n-placeholder="profile.locationPh" placeholder="Ciudad, país o sede" autocomplete="address-level2" />
+            </div>
+          </div>
+        </section>
+
+        <section class="profile-section">
+          <h3 class="profile-section__title">
+            <span data-i18n="profile.social">Redes y presencia web</span>
+            <span class="profile-tag profile-tag--opt" data-i18n="profile.optional">Opcional</span>
+          </h3>
+          <div class="profile-grid">
+            <div class="field">
+              <label for="profile-linkedin" data-i18n="profile.linkedin">LinkedIn</label>
+              <input type="url" id="profile-linkedin" data-i18n-placeholder="profile.linkedinPh" placeholder="https://linkedin.com/in/usuario" />
+            </div>
+            <div class="field">
+              <label for="profile-github" data-i18n="profile.github">GitHub</label>
+              <input type="url" id="profile-github" data-i18n-placeholder="profile.githubPh" placeholder="https://github.com/usuario" />
+            </div>
+            <div class="field">
+              <label for="profile-twitter" data-i18n="profile.twitter">X (Twitter)</label>
+              <input type="url" id="profile-twitter" data-i18n-placeholder="profile.twitterPh" placeholder="https://x.com/usuario" />
+            </div>
+            <div class="field">
+              <label for="profile-website" data-i18n="profile.website">Sitio web</label>
+              <input type="url" id="profile-website" data-i18n-placeholder="profile.websitePh" placeholder="https://tu-dominio.com" />
+            </div>
+          </div>
+          <div class="profile-social-links" id="profile-social-links">
+            <button type="button" class="social-link-btn" data-social="linkedin" title="LinkedIn" aria-label="LinkedIn">
+              <img src="https://images.shadcnspace.com/assets/svgs/icon-linkedin.svg" alt="" width="16" height="16" />
+            </button>
+            <button type="button" class="social-link-btn" data-social="github" title="GitHub" aria-label="GitHub">
+              <img class="social-icon-light" src="https://images.shadcnspace.com/assets/svgs/icon-github.svg" alt="" width="16" height="16" />
+              <img class="social-icon-dark" src="https://images.shadcnspace.com/assets/svgs/icon-github-white.svg" alt="" width="16" height="16" hidden />
+            </button>
+            <button type="button" class="social-link-btn" data-social="twitter" title="X" aria-label="X">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </button>
+            <button type="button" class="social-link-btn" data-social="website" title="Web" aria-label="Sitio web">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Z"/><path fill="none" stroke="currentColor" stroke-width="1.6" d="M3 12h18M12 3c2.5 2.8 4 6.2 4 9s-1.5 6.2-4 9M12 3c-2.5 2.8-4 6.2-4 9s1.5 6.2 4 9"/></svg>
+            </button>
+          </div>
+        </section>
+
+        <p class="profile-footnote" data-i18n="profile.footnote">Nombre y cargo son obligatorios. El resto enriquece informes y el contexto del asistente IA.</p>
+        <div class="profile-actions">
+          <button type="button" class="btn-soft" id="profile-cancel" data-i18n="profile.cancel">Cancelar</button>
+          <button type="button" class="btn-primary" id="profile-save">
+            <span data-icon="check"></span><span data-i18n="profile.save">Guardar perfil</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal soporte (Norvik) -->
+  <div class="modal-overlay" id="support-modal" hidden role="dialog" aria-modal="true" aria-labelledby="support-title">
+    <div class="modal-card glass-panel">
+      <div class="modal-card__head">
+        <span class="modal-card__title" id="support-title">
+          <span class="modal-title-ico" data-icon="help"></span>
+          <span data-i18n="support.title">Soporte</span>
+        </span>
+        <button type="button" class="modal-close-btn" id="support-close" aria-label="Cerrar">
+          <span data-icon="close"></span>
+        </button>
+      </div>
+      <div class="modal-card__body">
+        <span class="support-license-badge" data-i18n="support.licenseBadge">Licencia MIT</span>
+        <p data-i18n="support.body1">Heimdall Timewatch es software libre (MIT) de análisis forense NTFS. Puedes usarlo, modificarlo y redistribuirlo conservando el aviso de copyright.</p>
+        <div class="support-license-box">
+          <strong data-i18n="support.licenseTitle">Uso y derechos</strong>
+          <p data-i18n="support.licenseBody">El motor y la CLI usan solo biblioteca estándar de Python. La GUI empaqueta Qt (PySide6) bajo LGPL v3; ver THIRD_PARTY_LICENSES.md. Úsalo en sistemas propios o en auditorías DFIR autorizadas.</p>
+        </div>
+        <p data-i18n="support.body2">¿Ideas, fallos o ganas de contribuir? Abre un issue o un pull request en GitHub.</p>
+        <div class="support-links">
+          <a class="support-link" href="https://github.com/heindall92/heimdall-timewatch_DFIR" target="_blank" rel="noopener noreferrer" data-i18n="support.purchase">Repositorio en GitHub</a>
+          <a class="support-link" href="https://github.com/heindall92/heimdall-timewatch_DFIR/issues" target="_blank" rel="noopener noreferrer" data-i18n="support.contact">Reportar un issue</a>
+          <a class="support-link" href="https://github.com/heindall92/heimdall-timewatch_DFIR#readme" target="_blank" rel="noopener noreferrer" data-i18n="support.docs">Documentación</a>
+        </div>
+        <ul class="support-list">
+          <li><strong data-i18n="support.tip1">Escaneo MFT:</strong> <span data-i18n="support.tip1Body">selecciona $MFT en el sidebar y pulsa Escanear para comparar $SI vs $FN.</span></li>
+          <li><strong data-i18n="support.tip2">NTFS Explorer:</strong> <span data-i18n="support.tip2Body">explora entradas MFT, metadatos y vista hex tras un análisis.</span></li>
+          <li><strong data-i18n="support.tip3">Asistente IA:</strong> <span data-i18n="support.tip3Body">configura Ollama en Configuración para resúmenes DFIR contextualizados.</span></li>
+          <li><strong data-i18n="support.tip4">Informes:</strong> <span data-i18n="support.tip4Body">exporta JSON, CSV o HTML desde el dashboard o el explorador.</span></li>
+        </ul>
+        <p class="support-meta" data-i18n="support.meta">Heimdall Timewatch · Licencia MIT · DFIR autorizado</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="expanding-search-dock.js"></script>
+  <script src="glow-chart.js"></script>
+  <script src="forensics-graph.js"></script>
+  <script src="scan-showcase.js"></script>
+  <script src="heimdall-icons.js"></script>
+  <script src="notifications.js"></script>
+  <script src="ntfs-explorer.js"></script>
+  <script src="profile.js"></script>
+  <script src="findings-table.js"></script>
+  <script src="elastic-switch.js"></script>
+  <script src="advanced-filters.js"></script>
+  <script src="ai-chat.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
