@@ -15,6 +15,10 @@ Creado por **Yoandy Ramirez Delgado** · Herramienta de DFIR / Blue Team para us
   <img alt="Plataforma: Windows / Linux" src="https://img.shields.io/badge/plataforma-Windows%20%7C%20Linux-lightgrey.svg">
 </p>
 
+<p align="center">
+  <img src="docs/lab-demo.svg" alt="Modo laboratorio de heimdall-timewatch: detecta 6/6 casos de timestomping plantados" width="100%">
+</p>
+
 ---
 
 ## ¿Qué hace?
@@ -51,10 +55,6 @@ python3 -m heimdall_timewatch.cli lab
 ```
 
 Genera un MFT sintético con 6 casos de timestomping plantados y verifica que el detector los encuentra. Es tu "campo de tiro" para estudiar la técnica.
-
-<p align="center">
-  <img src="docs/lab-demo.svg" alt="Modo laboratorio de heimdall-timewatch: detecta 6/6 casos de timestomping plantados" width="100%">
-</p>
 
 ### Analizar un MFT real
 
