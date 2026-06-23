@@ -51,6 +51,10 @@ python3 -m heimdall_timewatch.cli lab
 
 Genera un MFT sintético con 6 casos de timestomping plantados y verifica que el detector los encuentra. Es tu "campo de tiro" para estudiar la técnica.
 
+<p align="center">
+  <img src="docs/lab-demo.svg" alt="Modo laboratorio de heimdall-timewatch: detecta 6/6 casos de timestomping plantados" width="100%">
+</p>
+
 ### Analizar un MFT real
 
 ```bash

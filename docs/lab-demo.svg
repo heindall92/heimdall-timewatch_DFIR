@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 752" font-family="'SFMono-Regular', 'Consolas', 'Menlo', monospace" font-size="13">
+  <rect x="8" y="8" width="884" height="736" rx="10" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <path d="M8 18 a10 10 0 0 1 10 -10 h864 a10 10 0 0 1 10 10 v20 h-884 z" fill="#161b22"/>
+  <circle cx="30" cy="23" r="6" fill="#ff5f56"/>
+  <circle cx="50" cy="23" r="6" fill="#ffbd2e"/>
+  <circle cx="70" cy="23" r="6" fill="#27c93f"/>
+  <text x="450" y="27" fill="#8b949e" text-anchor="middle" font-size="12">heimdall-timewatch — python -m heimdall_timewatch.cli lab</text>
+  <line x1="8" y1="38" x2="892" y2="38" stroke="#30363d" stroke-width="1"/>
+
+  <g xml:space="preserve" fill="#abb2bf">
+    <text x="24" y="62"  fill="#56b6c2">   __ __    _         __     ____      __  _                       __      __</text>
+    <text x="24" y="81"  fill="#56b6c2">  / // /__ (_)_ _  ___/ /__ _/ / /____ / /_(_)_ _  ___ _    _____ _/ /_____/ /</text>
+    <text x="24" y="100" fill="#56b6c2"> / _  / -_) /  ' \/ _  / _ `/ / /___// __/ /  ' \/ -_) |/|/ / _ `/ __/ __/ _ \</text>
+    <text x="24" y="119" fill="#56b6c2">/_//_/\__/_/_/_/_/\_,_/\_,_/_/_/      \__/_/_/_/_/\__/|__,__/\_,_/\__/\__/_//_/</text>
+
+    <text x="24" y="150" fill="#56b6c2">        TimeStomp Detector :: $SI vs $FN + USN Journal corroboration</text>
+    <text x="24" y="169" fill="#6b7280" font-style="italic">                      "El guardián que ve el tiempo"</text>
+
+    <text x="24" y="200" fill="#c678dd">[*] MODO LABORATORIO</text>
+    <text x="24" y="219" fill="#6b7280">    Genero un MFT sintético con casos de timestomping plantados y lo analizo.</text>
+
+    <text x="24" y="250" fill="#56b6c2">[*] Casos plantados (6):</text>
+    <text x="24" y="269"><tspan fill="#e5c07b">    MFT #66</tspan> → H1: timestomping clásico ($SI&lt;$FN)</text>
+    <text x="24" y="288"><tspan fill="#e5c07b">    MFT #67</tspan> → H2: subsegundos $SI en cero</text>
+    <text x="24" y="307"><tspan fill="#e5c07b">    MFT #68</tspan> → H4: created &gt; modified</text>
+    <text x="24" y="326"><tspan fill="#e5c07b">    MFT #69</tspan> → H5: fecha en el futuro</text>
+    <text x="24" y="345"><tspan fill="#e5c07b">    MFT #70</tspan> → H6: subsegundos $FN en cero</text>
+    <text x="24" y="364"><tspan fill="#e5c07b">    MFT #71</tspan> → H1+H2: combinado (clásico + redondeo)</text>
+
+    <text x="24" y="395" fill="#3a4150">═══════════════════════════════════════════════════════════════════════════</text>
+    <text x="24" y="414" fill="#e6e6e6" font-weight="bold">  RESUMEN DEL ANÁLISIS</text>
+    <text x="24" y="433" fill="#3a4150">═══════════════════════════════════════════════════════════════════════════</text>
+    <text x="24" y="452">  Registros vistos:        72        Archivos marcados:        6</text>
+    <text x="24" y="471"><tspan fill="#e06c75" font-weight="bold">    CRÍTICO: 1</tspan>    <tspan fill="#d19a66">ALTO: 1</tspan>    <tspan fill="#e5c07b">MEDIO: 3</tspan>    <tspan fill="#6b7280">BAJO: 1</tspan></text>
+    <text x="24" y="490" fill="#3a4150">═══════════════════════════════════════════════════════════════════════════</text>
+
+    <text x="24" y="521" fill="#e6e6e6" font-weight="bold">═══ VERIFICACIÓN (¿detectamos lo plantado?) ═══</text>
+    <text x="24" y="540"><tspan fill="#98c379" font-weight="bold">  ✓ DETECTADO</tspan>  MFT #66 — H1: timestomping clásico ($SI&lt;$FN)</text>
+    <text x="24" y="559"><tspan fill="#98c379" font-weight="bold">  ✓ DETECTADO</tspan>  MFT #67 — H2: subsegundos $SI en cero</text>
+    <text x="24" y="578"><tspan fill="#98c379" font-weight="bold">  ✓ DETECTADO</tspan>  MFT #68 — H4: created &gt; modified</text>
+    <text x="24" y="597"><tspan fill="#98c379" font-weight="bold">  ✓ DETECTADO</tspan>  MFT #69 — H5: fecha en el futuro</text>
+    <text x="24" y="616"><tspan fill="#98c379" font-weight="bold">  ✓ DETECTADO</tspan>  MFT #70 — H6: subsegundos $FN en cero</text>
+    <text x="24" y="635"><tspan fill="#98c379" font-weight="bold">  ✓ DETECTADO</tspan>  MFT #71 — H1+H2: combinado (clásico + redondeo)</text>
+
+    <text x="24" y="672" fill="#98c379" font-weight="bold">  Detección: 6/6 casos plantados</text>
+    <text x="24" y="700"><tspan fill="#27c93f">$</tspan> <tspan fill="#6b7280">_</tspan></text>
+  </g>
+</svg>
