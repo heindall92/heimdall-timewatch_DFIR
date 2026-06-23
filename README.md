@@ -4,7 +4,7 @@
 >
 > *"El guardián que ve el tiempo."*
 
-Creado por **Heindall** · Herramienta de DFIR / Blue Team para uso educativo y autorizado.
+Creado por **Yoandy Ramirez Delgado** · Herramienta de DFIR / Blue Team para uso educativo y autorizado.
 
 <p>
   <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg">
