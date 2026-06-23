@@ -137,4 +137,4 @@ Las contribuciones son bienvenidas: nuevas heurísticas, parsers de artefactos a
 
 ---
 
-*heimdall-timewatch · creado por Heindall · 2026 · MIT License*
+*heimdall-timewatch · creado por Yoandy Ramirez Delgado · 2026 · MIT License*
