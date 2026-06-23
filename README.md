@@ -7,6 +7,7 @@
 Creado por **Yoandy Ramirez Delgado** · Herramienta de DFIR / Blue Team para uso educativo y autorizado.
 
 <p>
+  <a href="https://github.com/heindall92/heimdall-timewatch_DFIR/releases"><img alt="Release" src="https://img.shields.io/github/v/release/heindall92/heimdall-timewatch_DFIR?color=brightgreen&label=release"></a>
   <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg">
   <img alt="Python 3.8+" src="https://img.shields.io/badge/Python-3.8%2B-blue.svg">
   <img alt="Dependencias: 0" src="https://img.shields.io/badge/dependencias-0-success.svg">

@@ -23,7 +23,7 @@ LÍMITE HONESTO:
   sobrescriben. Si el evento de creación ya rotó fuera del journal, no habrá
   corroboración disponible (ausencia de evidencia != evidencia de ausencia).
 
-Autor: Heindall  |  Uso educativo / DFIR autorizado
+Autor: Yoandy Ramirez Delgado  |  Uso educativo / DFIR autorizado
 """
 
 from __future__ import annotations

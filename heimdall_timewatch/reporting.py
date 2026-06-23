@@ -3,12 +3,12 @@ heimdall-timewatch :: reporting.py
 ═══════════════════════════════════════════════════════════════════════════
 
 Generación de informes de los hallazgos en varios formatos:
-  · Consola (con color ANSI, tipo Heindall)
+  · Consola (con color ANSI)
   · JSON   (para integración con SIEM / pipelines)
   · CSV    (para abrir en Excel / Timeline Explorer)
   · HTML   (informe navegable y presentable)
 
-Autor: Heindall  |  Uso educativo / DFIR autorizado
+Autor: Yoandy Ramirez Delgado  |  Uso educativo / DFIR autorizado
 """
 
 from __future__ import annotations
@@ -308,7 +308,7 @@ def export_html(verdicts, stats, path: str, meta: Optional[dict] = None):
   </div>
   {"".join(rows) if rows else '<div class="card"><div class="fname">✓ Sin indicadores de timestomping</div></div>'}
 </div>
-<footer>heimdall-timewatch · creado por Heindall · uso educativo / DFIR autorizado</footer>
+<footer>heimdall-timewatch · creado por Yoandy Ramirez Delgado · uso educativo / DFIR autorizado</footer>
 </body></html>"""
 
     with open(path, "w", encoding="utf-8") as fh:

@@ -1,7 +1,7 @@
 # 🛡️ heimdall-timewatch — Manual Completo del Detector de Timestomping
 **Para:** Máster en Ciberseguridad — Evolve Academy + Blue Team / DFIR
 **Nivel:** Desde la teoría NTFS hasta el análisis forense real
-**Herramienta:** heimdall-timewatch (creada por Heindall) — detección de timestomping en NTFS
+**Herramienta:** heimdall-timewatch (creada por Yoandy Ramirez Delgado) — detección de timestomping en NTFS
 **Plataformas de práctica:** Cualquier imagen NTFS, máquinas Windows de HTB/THM, el laboratorio integrado
 **Referencia:** Brian Carrier "File System Forensic Analysis" + SANS DFIR + inversecos + Magnet Forensics + MITRE ATT&CK T1070.006
 
@@ -790,7 +790,7 @@ heimdall_timewatch/
 │   · corroborate(): cruza hallazgos con el USN, añade confianza ALTA.
 │
 ├── reporting.py      EL NARRADOR
-│   · Consola con color ANSI (estilo Heindall).
+│   · Consola con color ANSI.
 │   · Exportadores JSON (SIEM), CSV (Excel/Timeline), HTML (informe visual).
 │
 ├── labgen.py         EL CAMPO DE TIRO
@@ -966,6 +966,6 @@ heimdall-timewatch es un control de DETECCIÓN para esta técnica.
 > 3. VMs propias donde practiques timestomping con SetMACE/Timestomp y luego lo detectes
 > 4. Imágenes forenses de práctica (DFIR challenges, CTFs forenses)
 
-> **Autor:** heimdall-timewatch y este manual creados por Heindall para el Máster de Ciberseguridad.
+> **Autor:** heimdall-timewatch y este manual creados por Yoandy Ramirez Delgado para el Máster de Ciberseguridad.
 > **Basado en:** Brian Carrier "File System Forensic Analysis" + SANS DFIR + inversecos + Magnet Forensics + Microsoft NTFS docs + MITRE ATT&CK
 > **Última actualización:** Junio 2026

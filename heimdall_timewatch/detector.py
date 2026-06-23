@@ -20,7 +20,7 @@ Heurísticas implementadas:
   H5  Timestamps fuera de rango    (futuro / pre-instalación; confianza MEDIA)
   H6  $FN nanosegundos en cero     (el kernel no redondea; confianza MEDIA)
 
-Autor: Heindall  |  Uso educativo / DFIR autorizado
+Autor: Yoandy Ramirez Delgado  |  Uso educativo / DFIR autorizado
 """
 
 from __future__ import annotations

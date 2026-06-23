@@ -9,7 +9,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="heimdall-timewatch",
     version="1.0.0",
-    author="Heindall",
+    author="Yoandy Ramirez Delgado",
     description="Detector de timestomping en NTFS ($SI vs $FN + USN Journal)",
     long_description=long_description,
     long_description_content_type="text/markdown",

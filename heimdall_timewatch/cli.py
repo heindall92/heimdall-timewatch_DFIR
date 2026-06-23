@@ -16,7 +16,7 @@ Ejemplos:
   python -m heimdall_timewatch.cli scan -m \\$MFT --usn \\$J --html informe.html
   python -m heimdall_timewatch.cli scan -m \\$MFT --json out.json --min-score 25
 
-Autor: Heindall  |  Uso educativo / DFIR autorizado
+Autor: Yoandy Ramirez Delgado  |  Uso educativo / DFIR autorizado
 """
 
 from __future__ import annotations
@@ -219,7 +219,7 @@ def build_parser():
     p = argparse.ArgumentParser(
         prog="heimdall-timewatch",
         description="Detector de timestomping en NTFS ($SI vs $FN + USN). "
-                    "Creado por Heindall para DFIR/Blue Team autorizado.",
+                    "Creado por Yoandy Ramirez Delgado para DFIR/Blue Team autorizado.",
         epilog="Recuerda: ningún indicador es prueba concluyente. Corrobora.",
     )
     p.add_argument("--version", action="version",

@@ -12,7 +12,7 @@ atributo) almacenados como FILETIME de 64 bits (nanosegundos*100 desde
 Este módulo NO juzga. Solo extrae datos crudos y fiables. El veredicto de
 timestomping lo da el motor de detección (detector.py) sobre estos datos.
 
-Autor: Heindall  |  Uso educativo / DFIR autorizado
+Autor: Yoandy Ramirez Delgado  |  Uso educativo / DFIR autorizado
 Referencia: Brian Carrier "File System Forensic Analysis" + Microsoft NTFS docs
 """
 

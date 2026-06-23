@@ -4,11 +4,11 @@ heimdall-timewatch
 Detector de timestomping en NTFS mediante comparación $STANDARD_INFORMATION
 vs $FILE_NAME y corroboración cruzada con el USN Journal.
 
-Creado por Heindall · uso educativo / DFIR autorizado.
+Creado por Yoandy Ramirez Delgado · uso educativo / DFIR autorizado.
 """
 
 __version__ = "1.0.0"
-__author__ = "Heindall"
+__author__ = "Yoandy Ramirez Delgado"
 
 from .mft_parser import parse_mft_file, parse_record, MftRecord, count_records
 from .detector import analyze_records, AnalysisConfig, FileVerdict, Finding

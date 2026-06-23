@@ -18,7 +18,7 @@ e introduce, de forma controlada y etiquetada, varios escenarios:
 
 Esto es el "DVWA del timestomping": un campo de tiro seguro y reproducible.
 
-Autor: Heindall  |  Uso educativo / DFIR autorizado
+Autor: Yoandy Ramirez Delgado  |  Uso educativo / DFIR autorizado
 """
 
 from __future__ import annotations
