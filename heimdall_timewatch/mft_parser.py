@@ -139,7 +139,7 @@ def filetime_subsecond_100ns(raw: int) -> int:
     return raw % 10_000_000
 
 
-def apply_fixup(record: bytearray, usa_offset: int, usa_count: int) -> bytearray:
+def apply_fixup(record: bytearray, usa_offset: int, usa_count: int) -> tuple[bytearray, list[str]]:
     """
     Aplica el Update Sequence Array (fixup) de NTFS.
 
@@ -147,27 +147,31 @@ def apply_fixup(record: bytearray, usa_offset: int, usa_count: int) -> bytearray
     un valor de chequeo (el USN), guardando los bytes reales en el USA. Hay que
     restaurarlos antes de parsear, o los datos de los límites de sector estarán
     corruptos.
-    """
-    if usa_count == 0:
-        return record
 
-    # El primer USHORT del USA es el número de secuencia (el que se escribió
-    # al final de cada sector). Los siguientes son los valores originales.
+    Devuelve (registro restaurado, avisos de integridad).
+    """
+    warnings: list[str] = []
+    if usa_count == 0:
+        return record, warnings
+
     usn = record[usa_offset:usa_offset + 2]
     fixup_values = []
     for i in range(1, usa_count):
         off = usa_offset + (i * 2)
         fixup_values.append(record[off:off + 2])
 
-    # Cada sector de 512 bytes: sus 2 últimos bytes se restauran
     for i, original in enumerate(fixup_values):
         sector_end = (i + 1) * 512
         if sector_end <= len(record):
-            # Verificación de integridad: los 2 últimos bytes del sector
-            # deberían coincidir con el USN. Si no, el registro está dañado.
+            stamp = record[sector_end - 2:sector_end]
+            if stamp != usn:
+                warnings.append(
+                    f"Fixup USN mismatch en sector {i + 1}: "
+                    f"esperado {usn.hex()}, encontrado {stamp.hex()}"
+                )
             record[sector_end - 2:sector_end] = original
 
-    return record
+    return record, warnings
 
 
 # ───────────────────────────────────────────────────────────────────────────
@@ -285,8 +289,9 @@ def parse_record(raw: bytes, record_number: int) -> Optional[MftRecord]:
     flags = struct.unpack("<H", record[22:24])[0]
 
     # Aplicar fixup (restaurar bytes de los límites de sector)
+    fixup_warnings: list[str] = []
     try:
-        record = apply_fixup(record, usa_offset, usa_count)
+        record, fixup_warnings = apply_fixup(record, usa_offset, usa_count)
     except Exception:
         pass  # Si el fixup falla, intentamos parsear igualmente
 
@@ -300,6 +305,7 @@ def parse_record(raw: bytes, record_number: int) -> Optional[MftRecord]:
         sequence_number=seq_number,
         flags_raw=flags,
     )
+    rec.parse_warnings.extend(fixup_warnings)
 
     # Recorrer la cadena de atributos
     offset = first_attr_offset

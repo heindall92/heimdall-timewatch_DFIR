@@ -69,6 +69,16 @@ class FileVerdict:
     in_use: bool
     findings: list = field(default_factory=list)
     score: int = 0
+    filename_namespace: Optional[str] = None
+    parent_ref: Optional[int] = None
+    si_created: Optional[str] = None
+    si_modified: Optional[str] = None
+    si_mft_modified: Optional[str] = None
+    si_accessed: Optional[str] = None
+    fn_created: Optional[str] = None
+    fn_modified: Optional[str] = None
+    fn_mft_modified: Optional[str] = None
+    fn_accessed: Optional[str] = None
 
     @property
     def suspicion_level(self) -> str:
@@ -85,6 +95,31 @@ class FileVerdict:
     def add(self, finding: Finding):
         self.findings.append(finding)
         self.score += CONFIDENCE_WEIGHT.get(finding.confidence, 0)
+
+
+def _iso_dt(value: Optional[datetime.datetime]) -> Optional[str]:
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=datetime.timezone.utc)
+    return value.isoformat()
+
+
+def _snapshot_timestamps(rec: MftRecord) -> dict[str, Optional[str]]:
+    si = rec.si_timestamps
+    fn = rec.fn_timestamps
+    return {
+        "filename_namespace": rec.filename_namespace,
+        "parent_ref": rec.parent_ref,
+        "si_created": _iso_dt(si.created) if si else None,
+        "si_modified": _iso_dt(si.modified) if si else None,
+        "si_mft_modified": _iso_dt(si.mft_modified) if si else None,
+        "si_accessed": _iso_dt(si.accessed) if si else None,
+        "fn_created": _iso_dt(fn.created) if fn else None,
+        "fn_modified": _iso_dt(fn.modified) if fn else None,
+        "fn_mft_modified": _iso_dt(fn.mft_modified) if fn else None,
+        "fn_accessed": _iso_dt(fn.accessed) if fn else None,
+    }
 
 
 # ───────────────────────────────────────────────────────────────────────────
@@ -422,6 +457,7 @@ def analyze_records(records, config: Optional[AnalysisConfig] = None):
             filename=rec.filename,
             is_directory=rec.is_directory,
             in_use=rec.in_use,
+            **_snapshot_timestamps(rec),
         )
 
         # Heurísticas por-registro

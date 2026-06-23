@@ -113,6 +113,18 @@ def _wrap_resident_attribute(attr_type: int, content: bytes) -> bytes:
     return header + content + (b"\x00" * padding)
 
 
+def _stamp_fixup(record: bytearray, usa_offset: int, usa_count: int, usn: int) -> None:
+    """Escribe el USN en los límites de sector y guarda los bytes originales en USA."""
+    usn_bytes = struct.pack("<H", usn)
+    record[usa_offset:usa_offset + 2] = usn_bytes
+    for i in range(1, usa_count):
+        sector_end = i * 512
+        if sector_end <= len(record):
+            usa_entry = usa_offset + (i * 2)
+            record[usa_entry:usa_entry + 2] = record[sector_end - 2:sector_end]
+            record[sector_end - 2:sector_end] = usn_bytes
+
+
 def _build_record(record_number: int, filename: str, parent_ref: int,
                   si_times, fn_times, is_directory=False,
                   si_zero_subsec=False, fn_zero_subsec=False) -> bytes:
@@ -151,12 +163,12 @@ def _build_record(record_number: int, filename: str, parent_ref: int,
     header += struct.pack("<H", 0)                # padding
     header += struct.pack("<I", record_number)    # nº de registro
 
-    # USA (Update Sequence Array): USN + 2 valores. Para el lab los dejamos
-    # coherentes (no rompemos límites de sector porque el registro cabe en
-    # los primeros sectores y rellenamos con ceros).
-    usa = struct.pack("<H", 1)        # USN
-    usa += struct.pack("<H", 0)       # fixup sector 1
-    usa += struct.pack("<H", 0)       # fixup sector 2
+    # USA (Update Sequence Array): USN + valores por sector.
+    seq_number = 1
+    usa_count = 3
+    usa = struct.pack("<H", seq_number)
+    usa += struct.pack("<H", 0)
+    usa += struct.pack("<H", 0)
 
     body = header + usa
     # Alineamos hasta first_attr_offset
@@ -165,7 +177,9 @@ def _build_record(record_number: int, filename: str, parent_ref: int,
 
     # Rellenar hasta 1024 bytes
     body += b"\x00" * (MFT_RECORD_SIZE - len(body))
-    return body[:MFT_RECORD_SIZE]
+    record = bytearray(body[:MFT_RECORD_SIZE])
+    _stamp_fixup(record, usa_offset=48, usa_count=usa_count, usn=seq_number)
+    return bytes(record)
 
 
 def generate_lab_mft(output_path: str, n_clean: int = 200):
