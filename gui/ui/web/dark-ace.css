@@ -1,0 +1,271 @@
+/* Modo oscuro — iluminación Aceagency (glass carbón + glow azul) */
+
+[data-theme="dark"] .glass {
+  background: linear-gradient(
+    180deg,
+    rgba(28, 28, 34, 0.82) 0%,
+    rgba(14, 14, 18, 0.88) 100%
+  );
+  border-color: var(--glass-border-lit);
+  box-shadow: var(--glass-shadow);
+}
+
+[data-theme="dark"] .glass-strong {
+  background: linear-gradient(
+    180deg,
+    rgba(32, 32, 40, 0.94) 0%,
+    rgba(16, 16, 22, 0.96) 100%
+  );
+  border-color: var(--glass-border-lit);
+  box-shadow: var(--glass-shadow-lg);
+}
+
+[data-theme="dark"] .glass-inset {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.055) 0%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 var(--glass-inner-top),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 8px 28px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="dark"] .glass-shine::before {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0.02) 28%,
+    transparent 55%
+  );
+}
+
+[data-theme="dark"] ::selection {
+  background: rgba(0, 102, 255, 0.35);
+  color: #fff;
+}
+
+/* Escena — mesh oscuro con profundidad */
+[data-theme="dark"] .scene-bg {
+  background: var(--scene-base);
+}
+[data-theme="dark"] .scene-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 90% 55% at 15% 8%, var(--scene-mesh-a), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 85% 92%, var(--scene-mesh-b), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 35%);
+  pointer-events: none;
+}
+[data-theme="dark"] .blob {
+  opacity: 0.38;
+  filter: blur(100px);
+}
+
+/* Shell + sidebar — gradiente vertical interno */
+[data-theme="dark"] .shell {
+  box-shadow:
+    var(--glass-shadow-lg),
+    inset 0 1px 0 var(--glass-inner-top);
+}
+[data-theme="dark"] .sidebar {
+  background: linear-gradient(
+    180deg,
+    rgba(26, 26, 32, 0.55) 0%,
+    rgba(10, 10, 14, 0.35) 100%
+  );
+  border-right-color: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Barra superior */
+[data-theme="dark"] .top-bar-full {
+  background: linear-gradient(
+    180deg,
+    rgba(30, 30, 38, 0.88) 0%,
+    rgba(16, 16, 22, 0.92) 100%
+  );
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-inner-top);
+}
+[data-theme="dark"] .top-brand-plain .brand-text strong {
+  color: var(--ink);
+}
+
+/* Nav activo — neón azul */
+[data-theme="dark"] .nav-dock .nav-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+[data-theme="dark"] .nav-dock .nav-item.active {
+  background: linear-gradient(135deg, #0066ff 0%, #0052cc 100%);
+  box-shadow: var(--blue-neon), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+[data-theme="dark"] .lang-btn.active {
+  box-shadow: var(--blue-neon);
+}
+
+/* Paneles NTFS anidados (como Messages en Aceagency) */
+[data-theme="dark"] .panel-card,
+[data-theme="dark"] .artifact-panel,
+[data-theme="dark"] .filter-panel {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(0, 0, 0, 0.25) 100%
+  );
+}
+[data-theme="dark"] .config-row,
+[data-theme="dark"] .config-cell {
+  background: var(--panel-nested);
+  border-color: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+[data-theme="dark"] .card-head {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .card-head-icon {
+  background: rgba(0, 102, 255, 0.18);
+  box-shadow: 0 0 16px rgba(0, 102, 255, 0.25);
+}
+
+/* Inputs + meta */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="search"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="url"],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+[data-theme="dark"] input:focus,
+[data-theme="dark"] select:focus,
+[data-theme="dark"] textarea:focus {
+  border-color: var(--blue);
+  box-shadow: var(--focus-ring);
+}
+[data-theme="dark"] .meta-value {
+  background: var(--meta-bg);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Inspector + workspace cards */
+[data-theme="dark"] .inspector {
+  background: linear-gradient(
+    180deg,
+    rgba(28, 28, 34, 0.6) 0%,
+    rgba(12, 12, 16, 0.5) 100%
+  );
+  border-left-color: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.04);
+}
+[data-theme="dark"] .inspector-head,
+[data-theme="dark"] .inspector-tabs {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .inspector-tab.active {
+  color: var(--blue-light);
+  border-bottom-color: var(--blue);
+  text-shadow: 0 0 12px rgba(0, 102, 255, 0.4);
+}
+[data-theme="dark"] .btn-export {
+  background: rgba(0, 102, 255, 0.14);
+  border-color: rgba(0, 102, 255, 0.45);
+  color: var(--blue-light);
+}
+[data-theme="dark"] .btn-export:hover {
+  background: rgba(0, 102, 255, 0.24);
+}
+[data-theme="dark"] .kpi,
+[data-theme="dark"] .toolbar,
+[data-theme="dark"] .glow-chart-panel,
+[data-theme="dark"] .canvas,
+[data-theme="dark"] .timeline-bar {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 32px rgba(0, 0, 0, 0.35);
+}
+[data-theme="dark"] .chip.active,
+[data-theme="dark"] .sidebar-link.active {
+  background: rgba(0, 102, 255, 0.22);
+  color: var(--blue-light);
+  box-shadow: 0 0 16px rgba(0, 102, 255, 0.2);
+}
+[data-theme="dark"] .cta-fab {
+  box-shadow: var(--blue-neon), 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .sidebar-cta {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.05) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .finding-detail {
+  background: rgba(255, 255, 255, 0.06);
+  border-left-color: var(--blue-light);
+  color: var(--ink-1, #e2e8f0);
+}
+[data-theme="dark"] .finding-detail strong { color: #f8fafc; }
+[data-theme="dark"] .finding-detail-body { color: rgba(226, 232, 240, 0.88); }
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .heuristics-title { color: var(--blue-light); }
+[data-theme="dark"] .node-label {
+  background: rgba(16, 20, 30, 0.92);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+[data-theme="dark"] .node-circle {
+  background: rgba(14, 18, 28, 0.92);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+[data-theme="dark"] .graph-edge-line {
+  stroke: var(--graph-edge-stroke);
+}
+[data-theme="dark"] .graph-edge-line--soft {
+  stroke: var(--graph-edge-stroke-soft);
+}
+[data-theme="dark"] .scan-showcase__stage {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .scan-tag {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: rgba(226, 232, 240, 0.65);
+}
+[data-theme="dark"] .scan-tag--reveal {
+  background: rgba(0, 102, 255, 0.15);
+  border-color: rgba(0, 102, 255, 0.45);
+  color: var(--blue-light);
+}
+[data-theme="dark"] .scan-showcase__cta {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 102, 255, 0.35);
+}
+[data-theme="dark"] .scan-showcase__fade--l { background: linear-gradient(90deg, rgba(12, 12, 16, 0.95), transparent); }
+[data-theme="dark"] .scan-showcase__fade--r { background: linear-gradient(270deg, rgba(12, 12, 16, 0.95), transparent); }
+[data-theme="dark"] .graph-node.selected .node-circle {
+  box-shadow: var(--blue-neon);
+}
+[data-theme="dark"] .status-dot.on {
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.65);
+}
+[data-theme="dark"] .nav-dock .nav-badge {
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.55);
+}
+[data-theme="dark"] .divider {
+  background: rgba(255, 255, 255, 0.08);
+}

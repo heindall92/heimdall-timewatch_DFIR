@@ -1,0 +1,2 @@
+# Dependencias de desarrollo — no forman parte del motor forense.
+pytest>=7.0.0
