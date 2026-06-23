@@ -1,0 +1,7 @@
+# heimdall-timewatch no requiere dependencias externas.
+# Usa solo la biblioteca estándar de Python 3.8+
+# (struct, datetime, argparse, json, csv, html).
+#
+# Esto es deliberado: una herramienta forense debe ser auditable, portable
+# y ejecutable en un entorno aislado sin pip install. Cero dependencias =
+# cero superficie de supply-chain y máxima confianza en entornos DFIR.

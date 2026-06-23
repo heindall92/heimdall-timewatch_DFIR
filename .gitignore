@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.log
+# Artefactos forenses: NUNCA subir MFTs reales a un repo
+*\$MFT*
+*\$J*
+*.dd
+*.raw
+*.E01
+salida_*/
