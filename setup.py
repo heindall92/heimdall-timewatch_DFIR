@@ -13,7 +13,7 @@ setup(
     description="Detector de timestomping en NTFS ($SI vs $FN + USN Journal)",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    license="MIT",
+    license="Proprietary",
     url="https://github.com/heindall92/heimdall-timewatch_DFIR",
     packages=find_packages(),
     python_requires=">=3.8",
@@ -25,7 +25,7 @@ setup(
     },
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "License :: Other/Proprietary License",
         "Operating System :: OS Independent",
         "Topic :: Security",
         "Intended Audience :: Information Technology",

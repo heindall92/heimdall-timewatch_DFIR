@@ -8,9 +8,10 @@ Creado por **Yoandy Ramirez Delgado** · Herramienta de DFIR / Blue Team para us
 
 <p>
   <a href="https://github.com/heindall92/heimdall-timewatch_DFIR/releases"><img alt="Release" src="https://img.shields.io/github/v/release/heindall92/heimdall-timewatch_DFIR?color=brightgreen&label=release"></a>
-  <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg">
+  <img alt="License: Commercial" src="https://img.shields.io/badge/License-Commercial-blue.svg">
   <img alt="Python 3.8+" src="https://img.shields.io/badge/Python-3.8%2B-blue.svg">
-  <img alt="Dependencias: 0" src="https://img.shields.io/badge/dependencias-0-success.svg">
+  <img alt="Motor: stdlib" src="https://img.shields.io/badge/motor-stdlib%20only-success.svg">
+  <img alt="Tests" src="https://github.com/heindall92/heimdall-timewatch_DFIR/actions/workflows/tests.yml/badge.svg">
   <img alt="MITRE ATT&CK T1070.006" src="https://img.shields.io/badge/MITRE%20ATT%26CK-T1070.006-red.svg">
   <img alt="Plataforma: Windows / Linux" src="https://img.shields.io/badge/plataforma-Windows%20%7C%20Linux-lightgrey.svg">
 </p>
@@ -31,18 +32,38 @@ La herramienta parsea el Master File Table (MFT) de NTFS a bajo nivel, extrae lo
 
 **Honestidad forense ante todo.** Ningún indicador que esta herramienta reporta es prueba concluyente por sí solo. Cada hallazgo incluye su nivel de confianza y sus falsos positivos conocidos. Un detector que exagera su certeza es peor que ninguno. La corroboración entre múltiples artefactos siempre prevalece sobre una sola señal.
 
-**Cero dependencias.** Solo biblioteca estándar de Python 3.8+. Una herramienta forense debe ser auditable, portable y ejecutable en un entorno aislado sin `pip install`.
+**Motor sin dependencias externas.** El núcleo forense (`heimdall_timewatch/`) usa **solo biblioteca estándar** de Python 3.8+. Debe ser auditable, portable y ejecutable en un entorno aislado sin `pip install`.
+
+**GUI opcional, deps separadas.** El panel de escritorio (`gui/`) añade PySide6, keyring y PyInstaller — justificado para una interfaz real, pero **no forman parte del motor**. Puedes usar CLI + motor en air-gap; la GUI es un extra.
+
+| Componente | Dependencias | Instalación |
+|------------|--------------|-------------|
+| **Motor + CLI** | Ninguna (stdlib) | `pip install -e .` o ejecutar directo |
+| **GUI (opcional)** | PySide6, keyring | `pip install -r requirements-gui.txt` |
+| **Tests (dev)** | pytest | `pip install -r requirements-dev.txt` |
 
 ## Instalación
+
+### Motor y CLI (recomendado para DFIR / air-gap)
 
 ```bash
 git clone https://github.com/heindall92/heimdall-timewatch_DFIR.git
 cd heimdall-timewatch_DFIR
-# No requiere dependencias. Opcionalmente:
+# Sin pip install también funciona:
+python3 -m heimdall_timewatch.cli lab
+# Opcionalmente, instalar entry point:
 pip install -e .
 ```
 
-> **Requisitos:** Python 3.8 o superior. Nada más. Funciona en Windows y Linux
+### GUI de escritorio (opcional)
+
+```bash
+pip install -r requirements-gui.txt
+python run_gui.bat          # Windows
+# o: python -m gui.main
+```
+
+> **Requisitos:** Python 3.8 o superior. El motor no necesita nada más. Funciona en Windows y Linux
 > (la salida con color y caracteres Unicode está forzada a UTF-8, así que no se
 > rompe en la consola de Windows).
 
@@ -115,18 +136,29 @@ icat -o 2048 disco.dd 0 > \$MFT
 
 ```
 heimdall-timewatch/
-├── heimdall_timewatch/
-│   ├── __init__.py
-│   ├── mft_parser.py     # parser de bajo nivel del MFT
-│   ├── detector.py       # motor de las 6 heurísticas
+├── heimdall_timewatch/    # motor forense (stdlib only)
+│   ├── mft_parser.py      # parser de bajo nivel del MFT
+│   ├── detector.py        # motor de las 6 heurísticas
 │   ├── usn_journal.py     # parser USN + corroboración
-│   ├── reporting.py       # consola/JSON/CSV/HTML
+│   ├── scan_service.py    # orquestación compartida CLI + GUI
 │   ├── labgen.py          # generador de MFT de laboratorio
 │   └── cli.py             # interfaz de línea de comandos
-├── requirements.txt
-├── setup.py
-└── README.md
+├── gui/                   # panel opcional (PySide6)
+├── tests/                 # pytest — lab 6/6 + parser
+├── requirements.txt       # motor: sin deps (documentación)
+├── requirements-gui.txt   # GUI opcional
+├── requirements-dev.txt   # pytest para CI
+└── setup.py
 ```
+
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest -q
+```
+
+Incluye verificación automática del modo laboratorio (6/6 casos plantados) y round-trips del parser MFT (fixup, FILETIME, atributos `$SI`/`$FN`).
 
 ## Aviso legal
 
@@ -134,11 +166,13 @@ Para uso en sistemas propios, laboratorios autorizados (HTB, THM, máquinas de p
 
 ## Licencia
 
-Distribuido bajo licencia **MIT**. Eres libre de usar, modificar y redistribuir la herramienta, conservando el aviso de copyright. Ver el archivo [LICENSE](LICENSE) para el texto completo.
+Distribuido bajo licencia **MIT** (ver [LICENSE](LICENSE)). Eres libre de usar, modificar y redistribuir la herramienta conservando el aviso de copyright.
+
+La GUI opcional empaqueta Qt vía PySide6 (LGPL v3) y otros componentes de terceros; sus obligaciones de licencia se detallan en [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) y aplican únicamente al distribuir la GUI o el ejecutable. El motor y la CLI son solo stdlib, sin terceros.
 
 ## Contribuir
 
-Las contribuciones son bienvenidas: nuevas heurísticas, parsers de artefactos adicionales (LNK, Prefetch, $LogFile), o casos de laboratorio. Abre un *issue* para discutir cambios grandes antes de un *pull request*. Mantén el principio de **cero dependencias** y documenta los falsos positivos de cada heurística nueva.
+Las contribuciones son bienvenidas: nuevas heurísticas, parsers de artefactos adicionales (LNK, Prefetch, $LogFile), o casos de laboratorio. Abre un *issue* para discutir cambios grandes antes de un *pull request*. Mantén el **motor sin dependencias externas** (stdlib) y documenta los falsos positivos de cada heurística nueva. Añade tests en `tests/` para cualquier cambio en parser o heurísticas.
 
 ---
 
